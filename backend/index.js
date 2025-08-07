@@ -4,6 +4,7 @@ import express from "express"
 import mongoose from "mongoose";
 import morgan from "morgan";
 
+import routes from "./routes/index.js"
 dotenv.config()
 
 
@@ -32,6 +33,9 @@ app.get("/", async(req, res) => {
     message: "Webcome to TaskHub API"
   });
 });
+
+// http://localhost:5000/api-v1/auth
+app.use("/api-v1", routes)
 
 
 // error middleware
