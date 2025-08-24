@@ -7,6 +7,15 @@ import { registerUser, loginUser } from "../controllers/auth-controller.js";
 
 const router = express.Router();
 
+//router.method(path, ...middleware, handler)
+/*
+validateRequest({
+  body?: ZodSchema;
+  query?: ZodSchema;
+  params?: ZodSchema;
+  headers?: ZodSchema;
+})
+  */
 router.post("/register",
   validateRequest({
     body: registerSchema

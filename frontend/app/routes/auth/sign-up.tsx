@@ -8,10 +8,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
+import { useSignUpMutation } from "@/hooks/use-auth";
+import { toast } from "sonner";
 
 // Dinh nghia signUpSchema
 // Dùng để định nghĩa type của form data
-type SignUpFormData = z.infer<typeof signUpSchema>
+export type SignUpFormData = z.infer<typeof signUpSchema>
 
 const SignUp = () => {
   //Thì form sẽ chứa tất cả các hàm và thuộc tính mà bạn thường destructure như:
@@ -27,8 +29,36 @@ const SignUp = () => {
     }
   })
 
+  /*
+  const {
+    mutate,          // Hàm trigger mutation (callback style, không cần await)
+    mutateAsync,     // Hàm trigger mutation (promise style, có thể await)
+    data,            // Data trả về từ mutationFn khi thành công
+    error,           // Error object nếu mutation thất bại
+    isIdle,          // true khi mutation chưa chạy
+    isLoading,       // true khi mutation đang chạy
+    isSuccess,       // true khi mutation thành công
+    isError,         // true khi mutation thất bại
+    status,          // "idle" | "loading" | "success" | "error"
+    reset            // Hàm reset state về idle
+  } = useMutation({ mutationFn });
+
+  useMutation la ham chua useSignUpMutation  nen:
+    - mutate la 
+ */
+  const {mutate, isPending} = useSignUpMutation();
+
   const handleOnSubmit = (values: SignUpFormData) => {
-    console.log(values)
+    mutate(values, {
+      onSuccess: () => {
+        toast.success("Account created successfully");
+      },
+      onError: (error: any) => {
+        const errorMesaage = error.response?.data?.message || "An error occurred";
+        console.log(error);
+        toast.error(error.message);
+      }
+    })
   }
 
 
@@ -66,7 +96,7 @@ const SignUp = () => {
               <FormField
                 control={form.control}
                 name="email"
-                render={(field) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel>Email Address</FormLabel>
                     <FormControl>
@@ -80,7 +110,7 @@ const SignUp = () => {
               <FormField
                 control={form.control}
                 name="name"
-                render={(field) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel> Full Name</FormLabel>
                     <FormControl>
@@ -94,11 +124,11 @@ const SignUp = () => {
               <FormField
                 control={form.control}
                 name="password"
-                render={(field) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="*****" {...field}/>
+                      <Input type="password" placeholder="******" {...field}/>
                     </FormControl>
                     <FormMessage/>
                   </FormItem>
@@ -108,19 +138,19 @@ const SignUp = () => {
               <FormField
                 control={form.control}
                 name="confirmPassword"
-                render={(field) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="*****" {...field}/>
+                      <Input type="password" placeholder="******" {...field}/>
                     </FormControl>
                     <FormMessage/>
                   </FormItem>
                 )}
               />
 
-              <Button type="submit" className="w-full">
-                Sign up
+              <Button type="submit" className="w-full" disabled={isPending}>
+                {isPending ? "Signing up..." : "Sign up"}
               </Button>
             </form>
           </Form>
