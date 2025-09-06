@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useSignUpMutation } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
@@ -16,6 +16,8 @@ import { toast } from "sonner";
 export type SignUpFormData = z.infer<typeof signUpSchema>
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
   //Thì form sẽ chứa tất cả các hàm và thuộc tính mà bạn thường destructure như:
   //const { register, handleSubmit, formState, reset, setValue, getValues, control, watch, trigger } = form;
   //zodResolver(schema) liên kết Zod schema với React Hook Form.
@@ -51,12 +53,19 @@ const SignUp = () => {
   const handleOnSubmit = (values: SignUpFormData) => {
     mutate(values, {
       onSuccess: () => {
-        toast.success("Account created successfully");
+        toast.success("Email Verification Required", {
+          description:
+            "Pleasee check your email for a verification link. If you don't see it, please check your spam folder."
+        });
+        
+        form.reset();
+        navigate("/sign-in")
+
       },
       onError: (error: any) => {
         const errorMesaage = error.response?.data?.message || "An error occurred";
         console.log(error);
-        toast.error(error.message);
+        toast.error(errorMesaage);
       }
     })
   }
