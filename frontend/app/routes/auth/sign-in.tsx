@@ -64,7 +64,7 @@ const SignIn = () => {
               <FormField
                 control={form.control}
                 name="email"
-                render={(field) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel>Email Address</FormLabel>
                     <FormControl>
@@ -78,7 +78,7 @@ const SignIn = () => {
               <FormField
                 control={form.control}
                 name="password"
-                render={(field) => (
+                render={({field}) => (
                   <FormItem>
                     <div className="flex items-center justify-between">
                       <FormLabel>Password</FormLabel>
